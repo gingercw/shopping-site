@@ -5,11 +5,12 @@ put melons in a shopping cart.
 
 Authors: Joel Burton, Christian Fernandez, Meggie Mahnken, Katie Byers.
 """
+##Question: after activating virtual env, do we need to do pip install each time?--no, just the first time.
 
 from flask import Flask, render_template, redirect, flash, session
 import jinja2
 
-import melons # how does python know this is melons.py file imported?
+import melons # Question: how does python know this is melons.py file imported?--import will only work with .py files (python modules).
 
 app = Flask(__name__)
 
@@ -76,7 +77,7 @@ def show_shopping_cart():
     # - pass the total order cost and the list of Melon objects to the template
     #
     # Make sure your function can also handle the case wherein no cart has been added to the session
-    cart_dict = session['cart']
+    cart_dict = session.get('cart', {})  # if cart is part of the session, use that, otherwise, use {}
     melons_in_cart = []
     total_cost = 0
 
@@ -87,10 +88,10 @@ def show_shopping_cart():
         melon_cost = melon.price * count
         total_cost += melon_cost
         melon.quantity = count
-        melon.melon_cost = melon_cost
+        melon.melon_cost = "${:,.2f}".format(melon_cost)
         
 
-    return render_template("cart.html", total_cost=total_cost, melons_in_cart = melons_in_cart)
+    return render_template("cart.html", total_cost="${:,.2f}".format(total_cost), melons_in_cart = melons_in_cart)
 
 
 @app.route("/add_to_cart/<melon_id>")
